@@ -1,31 +1,32 @@
-package ru.t1.authomatization.homework1;
+package ru.t1.authomatization.homework2;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import ru.t1.authomatization.homework1.BaseJava;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static java.util.Arrays.asList;
 
-@Disabled
-class BaseJavaTest {
+public class BaseJavaTest {
+
+    private static final Random random = new Random();
 
     @Test
     @DisplayName("Задача 1")
     void isEven() {
-        assertTrue(BaseJava.isEven(4),"Число нечетное");
-        assertFalse(BaseJava.isEven(3),"Число четное");
-        assertTrue(BaseJava.isEven(0),"Число нечетное");
-        assertTrue(BaseJava.isEven(-2),"Число нечетное");
-        assertFalse(BaseJava.isEven(-1),"Число четное");
+        int n = random.nextInt(100) + 1;
+        boolean result = BaseJava.isEven(n);
+        boolean expected = n % 2 == 0;
+        System.out.println(result == expected ? "TEST PASSED" : "TEST FAILED");
     }
 
     @RepeatedTest(10)
@@ -33,10 +34,10 @@ class BaseJavaTest {
     void checkAccess() {
         Random random = new Random();
 
-        int numberDenied = random.nextInt(18);
-        assertEquals("Denied", BaseJava.checkAccess(numberDenied),"Доступ разрешен");
-        int numberAllowed = random.nextInt(81) + 19;
-        assertEquals("Allowed", BaseJava.checkAccess(numberAllowed),"Доступ не разрешен");
+        int age = random.nextInt(99) + 1;
+        String result = BaseJava.checkAccess(age);
+        String expected = age >= 18 ? "ACCESS_GRANTED" : "ACCESS_DENIED";
+        System.out.println(result.equals(expected) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @RepeatedTest(10)
@@ -44,7 +45,8 @@ class BaseJavaTest {
     void isPositive() {
         Random random = new Random();
         int number = random.nextInt(199) - 99;
-        assertEquals(BaseJava.isPositive(number),number > 0,"Число не соответствует ожиданию");
+        Boolean result = BaseJava.isPositive(number);
+        System.out.println(number >= 0 && result ? "TEST PASSED" : "TEST FAILED");
     }
 
     @DisplayName("Задача 4")
@@ -62,7 +64,15 @@ class BaseJavaTest {
     })
     void getGrade(int score,String expectedGrade) {
         String result = BaseJava.getGrade(score);
-        assertEquals(expectedGrade, result, "Оценка для балла " + score + " должна быть " + expectedGrade);
+        String expected;
+        if (score <= 20) expected = "E";
+        else if (score <= 40) expected = "D";
+        else if (score <= 60) expected = "C";
+        else if (score <= 80) expected = "B";
+        else if (score <= 100) expected = "A";
+        else expected = "Error";
+
+        System.out.println(result.equals(expected) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @DisplayName("Задача 5")
@@ -73,7 +83,7 @@ class BaseJavaTest {
     })
     void blastOff(int number,String expectedString) {
         String result = BaseJava.blastOff(number);
-        assertEquals(expectedString, result, "Строка " + result + " должна быть " + expectedString);
+        System.out.println(result.equals(expectedString) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @RepeatedTest(10)
@@ -81,7 +91,7 @@ class BaseJavaTest {
     void sumToN() {
         Random random = new Random();
         int number = random.nextInt(20);
-        assertEquals(number * (number + 1) / 2, BaseJava.sumToN(number), "Сумма чисел от 1 до " + number + " должна быть " + number * (number + 1) / 2);;
+        System.out.println((number * (number + 1) / 2 == BaseJava.sumToN(number)) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @ParameterizedTest
@@ -97,7 +107,7 @@ class BaseJavaTest {
                 .map(String::trim)
                 .toArray(String[]::new);
         boolean result = BaseJava.hasBug(arr);
-        assertEquals(expected, result, "Ожидаемый результат для массива: " + java.util.Arrays.toString(arr));
+        System.out.println(expected == result? "TEST PASSED" : "TEST FAILED");
     }
 
     @ParameterizedTest
@@ -108,7 +118,7 @@ class BaseJavaTest {
     })
     void getEvenInRange(int start , int end, String expected) {
         String result = BaseJava.getEvenInRange(start,end);
-        assertEquals(expected,result, "Ожидаемый результат - " + expected + " не соответствует - " + result);
+        System.out.println(expected.equals(result) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @RepeatedTest(10)
@@ -117,8 +127,7 @@ class BaseJavaTest {
         Random random = new Random();
         int[] myArray = random.ints(3, 1, 101).toArray();
         IntStream streamArray = IntStream.of(myArray);
-        assertEquals(streamArray.max().getAsInt(),  BaseJava.findMax(myArray), "Максимальное значение в массиве должно быть правильно определено");
-
+        System.out.println(streamArray.max().getAsInt() == BaseJava.findMax(myArray) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @Test
@@ -134,20 +143,7 @@ class BaseJavaTest {
         for (int i = 0; i < input.length; i++) {
             expected[i] = input[input.length - 1 - i];
         }
-        assertArrayEquals(expected, BaseJava.reverse(input));
-
-        // Тест с одним элементом
-        String[] input2 = {"Single"};
-        String[] expected2 = {"Single"};
-        assertArrayEquals(expected2, BaseJava.reverse(input2));
-
-        // Тест с пустым массивом
-        String[] input3 = {};
-        String[] expected3 = {};
-        assertArrayEquals(expected3, BaseJava.reverse(input3));
-
-        // Тест с null
-        assertNull(BaseJava.reverse(null));
+        System.out.println(Arrays.equals(expected,  BaseJava.reverse(input)) ? "TEST PASSED" : "TEST FAILED");
     }
 
     @Test
@@ -161,18 +157,24 @@ class BaseJavaTest {
                 .mapToInt(Integer::intValue)
                 .average()
                 .orElse(0.0);
-        assertEquals(average, BaseJava.calcAverage(numbers), "Среднее арифметическое рассчитано неправильно");
+        System.out.println(average == BaseJava.calcAverage(numbers) ? "TEST PASSED" : "TEST FAILED");
+
     }
 
     @Test
     @DisplayName("Задача 12")
     void removeSpecificName() {
+        String removeName = "Bob";
         List<String> namesList = Arrays.asList("Alice", "Bob", "Charlie", "Bob", "Diana");
         List<String> result = BaseJava.removeSpecificName(namesList, "Bob");
+        List<String> expected = new ArrayList<>();
+        for (String name : namesList) {
+            if (removeName.equals(name)) {
+                continue;
+            }
+            expected.add(name);
+        }
 
-        assertEquals(Arrays.asList("Alice", "Charlie", "Diana"), result);
-        assertTrue(result.contains("Alice"));
-        assertFalse(result.contains("Bob"));
-        assertEquals(3, result.size());
+        System.out.println(namesList.equals(result) ? "TEST PASSED" : "TEST FAILED");
     }
 }

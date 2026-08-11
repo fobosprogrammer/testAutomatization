@@ -17,4 +17,18 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+task runTests(type: Test) {
+    dependsOn test
+    doLast {
+        println "Test run is over"
+    }
+}
+
+task runAll(dependsOn: runTests) {
+    description = 'Runs all tests and prints completion message'
 }
