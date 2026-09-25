@@ -36,7 +36,7 @@ dependencies {
     //
     // Документация: https://selenide.org
     // Версию поднять: поменять номер тут и перезапустить ./gradlew build.
-    implementation("com.codeborne:selenide:7.17.0")
+    testImplementation("com.codeborne:selenide:7.17.0")
     // =====================================================================
     //  AEONBITS.OWNER — типизированная работа с properties (вебинар «Конфигурирование»)
     // =====================================================================
@@ -77,6 +77,71 @@ tasks.test {
             "api.port" to project.findProperty("api.port")
         ))
 }
+
+
+// ---------- 5. UI-тесты на Selenide (в стандартную сборку НЕ входят) ----------
+val uiTest by tasks.register<Test>("uiTest") {
+    group = "verification"
+    description = "Runs UI tests with Selenide (JUnit tag 'ui'). Needs a browser!"
+
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+
+    useJUnitPlatform {
+        includeTags("ui")
+    }
+
+    // =====================================================================
+    //  КОНФИГУРАЦИЯ SELENIDE
+    // =====================================================================
+    // Все настройки Selenide (браузер, headless, baseUrl, таймауты и т.д.)
+    // вынесены в файл src/test/resources/selenide.properties — Selenide
+    // читает его из classpath автоматически.
+    //
+    // Переопределить любую настройку можно системным свойством (оно имеет
+    // приоритет над файлом), например так (см. также задачу apiTest ниже):
+    //   systemProperty("selenide.browser", "firefox")
+    //   systemProperty("selenide.headless", "false")
+
+    // Альтернатива — JVM-аргумент для указания драйвера вручную:
+    // jvmArgs("-Dwebdriver.chrome.driver=/usr/local/bin/chromedriver")
+
+    // =====================================================================
+    //  РЕСТ-КРЕДЫ ДЛЯ UI-ТЕСТОВ
+    // =====================================================================
+    // UI-тесты тоже работают с сервисом: создают товары через API
+    // (чтобы проверить их на странице), а в @AfterEach удаляют их.
+    // Поэтому в тестовую JVM должны попасть те же настройки API, что
+    // и для задачи apiTest. Значения берутся с тем же приоритетом:
+    //   1) -Dapi.xxx=... (системное свойство командной строки)
+    //   2) -PapiXxx=...  (gradle-свойство командной строки)
+    //   3) значения по умолчанию (127.0.0.1:8080, admin/secret123)
+    systemProperty("api.base.uri", providers.systemProperty("api.base.uri")
+        .orElse(providers.gradleProperty("apiBaseUri"))
+        .orElse("http://127.0.0.1")
+        .get())
+    systemProperty("api.port", providers.systemProperty("api.port")
+        .orElse(providers.gradleProperty("apiPort"))
+        .orElse("8080")
+        .get())
+    systemProperty("api.username", providers.systemProperty("api.username")
+        .orElse(providers.gradleProperty("apiUsername"))
+        .orElse("admin")
+        .get())
+    systemProperty("api.password", providers.systemProperty("api.password")
+        .orElse(providers.gradleProperty("apiPassword"))
+        .orElse("secret123")
+        .get())
+
+    // Показываем вывод тестовой JVM в консоли (stdout/stderr).
+    testLogging {
+        showStandardStreams = true
+        events("passed", "failed", "skipped")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+
 // ---------- 5а. REST API-тесты (RestAssured) ----------
 // Тесты на ручки HTTP-сервиса (см. пакет ru.stepup.api) отбираются по тегу @Tag("api").
 // Они требуют ЗАПУЩЕННЫЙ сервер (по умолчанию http://127.0.0.1:8080, см. класс Endpoints).

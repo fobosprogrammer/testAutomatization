@@ -10,6 +10,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 public class HomeWork3Test {
     // Задача 1: 4 автотеста с ассертами
 

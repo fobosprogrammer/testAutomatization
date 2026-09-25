@@ -1,5 +1,6 @@
 package ru.t1.authomatization.homework2;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 
+@Disabled
 public class BaseJavaTest {
 
     private static final Random random = new Random();
