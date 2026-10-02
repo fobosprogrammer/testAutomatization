@@ -66,6 +66,7 @@ dependencies {
     testImplementation("com.fasterxml.jackson.core:jackson-databind:2.19.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.seleniumhq.selenium:selenium-java:4.15.0")
+    implementation("org.aeonbits.owner:owner:1.0.12")
 }
 
 tasks.test {
