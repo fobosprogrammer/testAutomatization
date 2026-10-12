@@ -2,6 +2,7 @@ package ru.t1.authomatization.ui.homework9.pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
@@ -37,17 +38,18 @@ public class MainPage {
      *
      * @return this — PageObject возвращает себя для цепочек
      */
+    @Step("Открыть главную страницу магазина")
     public MainPage openPage() {
         open("/");
         return this;
     }
 
-    public void cartCountClick() {
-        cartCount.click();
-    }
+    @Step("Закрыть окно корзины")
     public void closeModalClick() {
         closeModal.click();
     }
+
+    @Step("Открыть главную страницу магазина")
     public void makeOrderButtonClick() {
         makeOrderButton.click();
     }
@@ -55,6 +57,7 @@ public class MainPage {
     public void clickToCartById(long productId) {
     }
 
+    @Step("Проверить что главная страница магазина отображается")
     public MainPage checkPageDisplayed() {
         MainPageAssert mainPageAssert = new MainPageAssert(this);
         mainPageAssert.checkPageDisplayed();
@@ -62,11 +65,13 @@ public class MainPage {
 
     }
 
+    @Step("")
     public MainPage clickToProductByName(String productName) {
         $("button[data-name='" + productName + "']").click();
         return this;
     }
 
+    @Step("Нажать кнопку добавления товара в корзину, количество - {quantity}, id продукта - {productId}")
     public void addToCart(int quantity, long productId) {
         SelenideElement card = $("#card-" + productId);
         SelenideElement qtyInput = card.find("#q-" + productId);
@@ -74,23 +79,27 @@ public class MainPage {
         card.find("[data-action='add-to-cart']").click();
     }
 
+    @Step("Нажатие на кнопку сделать заказ")
     public void clickMakeOrder() {
         MainPageAssert mainPageAssert = new MainPageAssert(this);
         mainPageAssert.makeOrderButtonIsVisible();
         makeOrderButton.click();
     }
 
+    @Step("Кнопка оформить заказ видна")
     public void isMakeOrderVisibility() {
         MainPageAssert mainPageAssert = new MainPageAssert(this);
         mainPageAssert.toastContainerIsVsibileAndText("Заказ принят в обработку");
     }
 
+    @Step("Нажатие на кнопку корзины")
     public void clickCartButton() {
         MainPageAssert mainPageAssert = new MainPageAssert(this);
         mainPageAssert.cartButtonIsVisible();
         cartButton.click();
     }
 
+    @Step("Проверить количество товаров в корзине ")
     public void checkCartCountNumber(int expectedQuantity) {
         MainPageAssert mainPageAssert = new MainPageAssert(this);
         mainPageAssert.cartButtonIsVisible();
@@ -101,6 +110,7 @@ public class MainPage {
         closeModal.click();
     }
 
+    @Step("Проверить цену товаров в корзине")
     public void checkCartPrice(double totalPrice) {
         MainPageAssert mainPageAssert = new MainPageAssert(this);
         mainPageAssert.cartButtonIsVisible();

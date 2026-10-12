@@ -1,10 +1,12 @@
 package ru.t1.authomatization.ui.homework9;
 
+import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.aeonbits.owner.ConfigFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.t1.authomatization.config.AppConfig;
@@ -33,7 +35,17 @@ public class CartTests extends BaseTest{
         config = ConfigFactory.create(AppConfig.class);
     }
 
+    @BeforeEach
+    void setUpAndClean() {
+        cleanupCreatedProducts();
+    }
+
     @AfterEach
+    void clean() {
+        cleanupCreatedProducts();
+    }
+
+    @Step("Удалить созданные тестами продукты")
     void cleanupCreatedProducts() {
 
         Response responseGet = given()
@@ -65,6 +77,7 @@ public class CartTests extends BaseTest{
         }
     }
 
+    @Step("API: создать товар «{productName}» (цена {price})")
     private long addProduct(String productName,double price) {
         String name = "Test Product " + System.currentTimeMillis();
         Response response = given()

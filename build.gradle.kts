@@ -4,6 +4,7 @@ import java.time.Duration
 plugins {
     id("java")          // компиляция Java, тесты, jar
     id("application")   // запуск приложения и создание дистрибутивов
+    id("io.qameta.allure") version "4.3.0"
 }
 
 group = "ru.t1.authomatization"
@@ -67,6 +68,40 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.seleniumhq.selenium:selenium-java:4.15.0")
     implementation("org.aeonbits.owner:owner:1.0.12")
+    testImplementation("io.qameta.allure:allure-rest-assured:2.35.5")
+    testImplementation("io.qameta.allure:allure-selenide:2.35.5")
+    testImplementation("io.qameta.allure:allure-java-commons:2.35.5")
+}
+
+// =====================================================================
+//  ALLURE: конфигурация плагина (сборка отчётов)
+// =====================================================================
+allure {
+    // Версия report-рантайма — чем будут собираться HTML-отчёты:
+    //   2.x  — классический Allure 2: скачивает allure-commandline (zip);
+    //   3.x  — новая Allure 3: дополнительно провижинит Node.js.
+    // Для стабильности вебинара берём проверенный годами Allure 2.
+    version.set("2.46.1")
+
+    adapter {
+        // Версия Java-адаптеров Allure (allure-jupiter, allure-rest-assured,
+        // allure-selenide, allure-java-commons). ДОЛЖНА совпадать с версиями
+        // зависимостей в блоке dependencies выше (у нас — 2.35.5).
+        allureJavaVersion.set("2.35.5")
+
+        frameworks {
+            // JUnit Jupiter (поддерживает и JUnit 5, и JUnit 6):
+            // включаем авторегистрацию слушателя AllureJunit5 — результаты
+            // каждого теста автоматически пишутся в build/allure-results.
+            jupiter {
+                autoconfigureListeners.set(true)
+            }
+        }
+    }
+}
+
+tasks.named<io.qameta.allure.gradle.report.tasks.AllureReport>("allureReport") {
+    clean.set(true)
 }
 
 tasks.test {
@@ -76,10 +111,10 @@ tasks.test {
             "api.username" to project.findProperty("api.username"),
             "api.password" to project.findProperty("api.password"),
             "api.base.uri" to project.findProperty("api.base.uri"),
-            "api.port" to project.findProperty("api.port")
+            "api.port" to project.findProperty("api.port"),
+            "allure.results.directory" to "${layout.buildDirectory.get().asFile}/allure-results"
         ))
 }
-
 
 // ---------- 5. UI-тесты на Selenide (в стандартную сборку НЕ входят) ----------
 val uiTest by tasks.register<Test>("uiTest") {
@@ -180,6 +215,7 @@ val apiTest by tasks.register<Test>("apiTest") {
         .get())
     systemProperty("api.password", providers.systemProperty("api.password")
         .orElse(providers.gradleProperty("apiPassword"))
+        .orElse("secret123")
         .get())
 
     // Показываем вывод тестовой JVM в консоли (stdout/stderr).

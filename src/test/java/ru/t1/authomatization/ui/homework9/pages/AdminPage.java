@@ -2,7 +2,7 @@ package ru.t1.authomatization.ui.homework9.pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import lombok.Getter;
+import io.qameta.allure.Step;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -13,7 +13,6 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selenide.*;
 
-@Getter
 public class AdminPage {
 
     /** Заголовок админки. id у него нет — берём по тегу h1. */
@@ -58,17 +57,20 @@ public class AdminPage {
         return backToSiteLink;
     }
 
+    @Step("Открыть страницу админки")
     public AdminPage openPage() {
         open("/admin");
         return this;
     }
 
+    @Step("Проверить что страница админки открыта")
     public AdminPage checkPageDisplayed() {
         AdminPageAssert adminPageAssert = new AdminPageAssert(this);
         adminPageAssert.checkPageVisible();
         return this;
     }
 
+    @Step("Добавить товар, имя - {name}, цена продукта - {price}")
     public AdminPage addProduct(String name, double price) {
         addProductName.setValue(name);
         addProductPrice.setValue(String.valueOf(price));
@@ -79,7 +81,7 @@ public class AdminPage {
         return this;
     }
 
-
+    @Step("Отредактировать товар, id продукта - {productId}, новое имя - {newName}, цена продукта - {newPrice}")
     public AdminPage editProduct(long productId, String newName, int newPrice) {
         $("#nm-" + productId).setValue(newName);
         $("#pr-" + productId).setValue(String.valueOf(newPrice));
@@ -89,6 +91,7 @@ public class AdminPage {
         return this;
     }
 
+    @Step("Получить имя продукта по номеру строки - {rowNumber}")
     public String getProductNameFromRow(int rowNumber) {
         SelenideElement nameInput = tableRows.get(rowNumber).$("input[id^='nm-']");
         if (nameInput.exists()) {
@@ -98,6 +101,7 @@ public class AdminPage {
         throw new AssertionError("Товар из строки '" + rowNumber + "' не найден в таблице админки");
     }
 
+    @Step("Получить id продукта по номеру строки - {rowNumber}")
     public long getProductIdFromRow(int rowNumber) {
         SelenideElement nameInput = tableRows.get(rowNumber).$("input[id^='nm-']");
         if (nameInput.exists()) {
@@ -108,6 +112,7 @@ public class AdminPage {
         throw new AssertionError("Товар из строки '" + rowNumber + "' не найден в таблице админки");
     }
 
+    @Step("Найти id продукта по имени - {name}")
     public long findProductIdByName(String name) {
         for (SelenideElement row : tableRows) {
             SelenideElement nameInput = row.$("input[id^='nm-']");

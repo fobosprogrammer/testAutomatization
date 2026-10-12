@@ -1,7 +1,7 @@
 package ru.t1.authomatization.ui.homework9.pages;
 
 import com.codeborne.selenide.SelenideElement;
-import lombok.Getter;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
@@ -26,6 +26,7 @@ public class LoginPage {
      *
      * @return this
      */
+    @Step("Открытие страницы логина")
     public LoginPage openPage() {
         open("/login");
         return this;
@@ -41,6 +42,7 @@ public class LoginPage {
      * @param username логин
      * @return this
      */
+    @Step("Ввести логин")
     public LoginPage enterUsername(String username) {
         usernameInput.setValue(username);
         return this;
@@ -52,6 +54,7 @@ public class LoginPage {
      * @param password пароль
      * @return this
      */
+    @Step("")
     public LoginPage enterPassword(String password) {
         passwordInput.setValue(password);
         return this;
@@ -62,6 +65,7 @@ public class LoginPage {
      *
      * @return this
      */
+    @Step("Нажатие кнопки Sign in")
     public LoginPage clickSignIn() {
         signInButton.click();
         return this;
@@ -101,6 +105,7 @@ public class LoginPage {
      * @param password пароль
      * @return Page Object админки {@link AdminPage}
      */
+    @Step("Полный сценарий успешного входа: заполнить форму и нажать «Sign in»")
     public AdminPage loginAs(String username, String password) {
         enterUsername(username);
         enterPassword(password);
@@ -119,6 +124,7 @@ public class LoginPage {
      * @param password пароль
      * @return this (мы всё ещё на странице входа)
      */
+    @Step("Полный сценарий НЕуспешного входа: заполнить форму, нажать «Sign in»")
     public LoginPage loginExpectingFailure(String username, String password) {
         enterUsername(username);
         enterPassword(password);
@@ -135,6 +141,7 @@ public class LoginPage {
      *
      * @return this
      */
+    @Step("Проверяет, что страница входа отобразилась (форма и поля видны)")
     public LoginPage checkPageDisplayed() {
         LoginPageAssert loginPageAssert = new LoginPageAssert(this);
         loginPageAssert.formIsLoaded();
@@ -147,6 +154,7 @@ public class LoginPage {
      * @param expectedMessage ожидаемый текст ошибки
      * @return this
      */
+    @Step("Проверяет, что показан блок ошибки авторизации.")
     public LoginPage checkError(String expectedMessage) {
         errorAlert.shouldBe(visible)
                 .shouldHave(com.codeborne.selenide.Condition.text(expectedMessage));

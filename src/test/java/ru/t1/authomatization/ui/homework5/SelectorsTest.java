@@ -1,25 +1,98 @@
 package ru.t1.authomatization.ui.homework5;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import io.qameta.allure.Step;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.aeonbits.owner.ConfigFactory;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.*;
+import ru.t1.authomatization.config.AppConfig;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("ui")
 public class SelectorsTest extends BaseUiTest{
+
+    private static String productForTestOne = "Стакан";
+    private static String productForTestTwo = "Test";
+    protected static AppConfig config;
+
+    static {
+        config = ConfigFactory.create(AppConfig.class);
+    }
+
+    @BeforeAll
+    static void setUpAndClean() {
+        cleanupCreatedProducts();
+        addProduct(productForTestOne,25);
+        addProduct(productForTestTwo,123);
+    }
+
+    @AfterAll
+    static void closeTests() {
+        cleanupCreatedProducts();
+    }
+
+    @Step("API: Удалить созданные тестами продукты")
+    static void cleanupCreatedProducts() {
+
+        Response responseGet = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/goods/list")
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+        // Шаг 3: Парсим и проверяем через AssertJ
+        List<Map<String, Object>> goodsList = responseGet.jsonPath().getList("goods");
+
+        assertThat(responseGet.getStatusCode()).isEqualTo(200);
+
+        List<String> idsToDelete = goodsList.stream()
+                .filter(p -> productForTestOne.equals(p.get("name")) || productForTestTwo.equals(p.get("name")))
+                .map(p -> p.get("id").toString())
+                .collect(Collectors.toList());
+
+        for (String id : idsToDelete) {
+            given()
+                    .auth().basic(config.username(), config.password())
+                    .pathParam("id", id)
+                    .when()
+                    .delete("/goods/{id}")
+                    .then()
+                    .statusCode(200);
+        }
+    }
+
+    @Step("API: создать товар «{productName}» (цена {price})")
+    private static long addProduct(String productName, double price) {
+        String name = "Test Product " + System.currentTimeMillis();
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .auth().basic(config.username(), config.password())
+                .body(Map.of("name", productName, "price", price))
+                .when()
+                .post("/goods/add");
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(200);
+        return response.jsonPath().getLong("data.id");
+    }
 
     @Test
     @DisplayName("1.1. Список названий товаров")
@@ -83,7 +156,7 @@ public class SelectorsTest extends BaseUiTest{
     @Test
     @DisplayName("1.5. Список карточек товаров в корзине")
     void shouldFindCartItems() {
-
+        $("[data-action='add-to-cart']").click();
         $("#open-cart-btn").click();
 
         ElementsCollection cartItems =
@@ -95,7 +168,7 @@ public class SelectorsTest extends BaseUiTest{
 
         cartItems.forEach(item ->
                 item.shouldBe(visible)
-                        .shouldNotHave(text(""))
+                        .shouldNot(Condition.text(")"))
         );
     }
 
