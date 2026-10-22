@@ -2,6 +2,7 @@ package ru.t1.authomatization.ui.homework6;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -39,6 +40,7 @@ public class Task3Tests {
         closeWebDriver();
     }
 
+    @Step("API: создать товар «{productName}» (цена {price})")
     private void addProduct(String addProductName, String price) {
         // Логин в админку
         open(BASE_URL + "/login");
@@ -53,6 +55,7 @@ public class Task3Tests {
         $("#add-btn").click();
     }
 
+    @Step("API: Удалить продукт по имени {addProductName}")
     private void deleteProduct(String addProductName) {
         open(BASE_URL + "/login");
         $("#username").val(username);

@@ -1,6 +1,7 @@
 package ru.t1.authomatization.ui.homework6;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.aeonbits.owner.ConfigFactory;
@@ -49,6 +50,7 @@ public class Task2SelenideTests {
     }
 
     @AfterEach
+    @Step("API: Удалить созданные тестами продукты")
     void cleanupCreatedProducts() {
 
         Response responseGet = given()
@@ -80,6 +82,7 @@ public class Task2SelenideTests {
         }
     }
 
+    @Step("API: создать товар «{productName}» (цена {price})")
     private long addProduct(String productName,double price) {
         String name = "Test Product " + System.currentTimeMillis();
         Response response = given()
