@@ -1,6 +1,7 @@
 package ru.t1.authomatization.ui.homework9;
 
 import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.aeonbits.owner.ConfigFactory;
@@ -49,6 +50,7 @@ public class CartTests extends BaseTest{
     void cleanupCreatedProducts() {
 
         Response responseGet = given()
+                .filter(new AllureRestAssured())
                 .contentType(ContentType.JSON)
                 .when()
                 .get("/goods/list")
@@ -68,6 +70,7 @@ public class CartTests extends BaseTest{
 
         for (String id : idsToDelete) {
             given()
+                    .filter(new AllureRestAssured())
                     .auth().basic(config.username(), config.password())
                     .pathParam("id", id)
                     .when()

@@ -176,6 +176,7 @@ public class Task3Tests {
 
     @Test
     @DisplayName("3.5")
+    @Step("Проверяем добавление продукта")
     void testResAssured() {
         Response loginResponse = RestAssured.given()
                 .contentType(ContentType.JSON)

@@ -65,7 +65,7 @@ public class MainPage {
 
     }
 
-    @Step("")
+    @Step("Нажатие на продукт")
     public MainPage clickToProductByName(String productName) {
         $("button[data-name='" + productName + "']").click();
         return this;

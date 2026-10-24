@@ -1,6 +1,7 @@
 package ru.t1.authomatization.ui.homework9.pages;
 
 import com.codeborne.selenide.Condition;
+import io.qameta.allure.Step;
 import org.assertj.core.api.AbstractAssert;
 
 import java.time.Duration;
@@ -17,6 +18,7 @@ public class AdminPageAssert extends AbstractAssert<AdminPageAssert,AdminPage> {
         super(actual, AdminPageAssert.class);
     }
 
+    @Step("Проверить видимость страницы админки")
     public AdminPageAssert checkPageVisible() {
         actual.getBackToSiteLink().shouldBe(visible);
         actual.getAdminTitle().shouldBe(visible);
@@ -26,12 +28,14 @@ public class AdminPageAssert extends AbstractAssert<AdminPageAssert,AdminPage> {
         return this;
     }
 
+    @Step("Проверить появление сообщения о добавлении товара")
     public void checkAddMessageIsVisible() {
         actual.getToastContainer()
                 .shouldBe(visible, Duration.ofSeconds(10))
                 .should(Condition.text("Товар успешно добавлен"));
     }
 
+    @Step("Проверить обновление товара")
     public void checkEditMessageIsVisible(long productId) {
         actual.getToastContainer()
                 .shouldBe(visible, Duration.ofSeconds(10))

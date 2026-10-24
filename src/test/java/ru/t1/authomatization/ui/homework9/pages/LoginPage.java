@@ -54,7 +54,7 @@ public class LoginPage {
      * @param password пароль
      * @return this
      */
-    @Step("")
+    @Step("Ввести пароль")
     public LoginPage enterPassword(String password) {
         passwordInput.setValue(password);
         return this;

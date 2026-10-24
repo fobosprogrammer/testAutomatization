@@ -1,5 +1,6 @@
 package ru.t1.authomatization.api.homework4;
 
+import io.qameta.allure.Step;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -21,6 +22,7 @@ public class Task1Tests extends BaseTest {
     // 1. Метод с использованием инструкций given(), when(), then()
     @Test
     @DisplayName("Тест 1: GET /goods/list через BDD стиль")
+    @Step("Тест 1: GET /goods/list через BDD стиль")
     void testGetListBddStyle() {
         given()
                 .log().all()
@@ -35,6 +37,7 @@ public class Task1Tests extends BaseTest {
     // 2. Метод с использованием RequestSpecification
     @Test
     @DisplayName("Тест 2: GET /goods/list через RequestSpecification")
+    @Step("Тест 2: GET /goods/list через RequestSpecification")
     void testGetListRequestSpec() {
         RequestSpecification requestSpec =  new RequestSpecBuilder()
                 .setBaseUri("http://localhost:8080")
@@ -53,6 +56,7 @@ public class Task1Tests extends BaseTest {
     // 3. Создание товара и проверка через встроенные проверки REST Assured
     @Test
     @DisplayName("Тест 3: POST /goods/add и проверка через REST Assured matchers")
+    @Step(" POST /goods/add и проверка через REST Assured matchers")
     void testCreateAndVerifyWithRestAssured() {
         // Шаг 1: Создаем товар
         String productName = "TestProduct_" + System.currentTimeMillis();
@@ -99,6 +103,7 @@ public class Task1Tests extends BaseTest {
     // 4. Создание товара и проверка через AssertJ
     @Test
     @DisplayName("Тест 4: POST /goods/add и проверка через AssertJ")
+    @Step("POST /goods/add и проверка через AssertJ")
     void testCreateAndVerifyWithAssertJ() {
         // Шаг 1: Создаем товар
         String productName = "TestProduct_AssertJ_" + System.currentTimeMillis();

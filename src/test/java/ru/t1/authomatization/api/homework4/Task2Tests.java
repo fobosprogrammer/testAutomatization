@@ -1,5 +1,6 @@
 package ru.t1.authomatization.api.homework4;
 
+import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
@@ -32,6 +33,7 @@ public class Task2Tests extends BaseTest  {
         createdIds.clear();
     }
 
+    @Step("Удаляем созданные продукты")
     private void deleteGoodsRecord(Long goodsId) {
         given()
                 .auth().basic(getUsername(), getPassword())
@@ -45,6 +47,7 @@ public class Task2Tests extends BaseTest  {
 
     // GET /goods/list
     @Test
+    @Step("Получить список продуктов")
     void testGetList_Success() {
         Response response = given().when().get("/goods/list");
         assertThat(response.statusCode()).isEqualTo(200);
@@ -54,6 +57,7 @@ public class Task2Tests extends BaseTest  {
 
     // POST /goods/add
     @Test
+    @Step("Проверяем добавление продукта")
     void testAddProduct_Success() {
         String name = "Test Product " + System.currentTimeMillis();
         Response response = given()
@@ -70,6 +74,7 @@ public class Task2Tests extends BaseTest  {
     }
 
     @Test
+    @Step("Проверяем получение статуса 400 при неверном запросе на добавление продукта")
     void testAddProduct_MissingName() {
         Response response = given()
                 .auth().basic(getUsername(), getPassword())
@@ -82,6 +87,7 @@ public class Task2Tests extends BaseTest  {
     }
 
     @Test
+    @Step("Проверяем добавление продукта, некорректная цена")
     void testAddProduct_NegativePrice() {
         Response response = given()
                 .auth().basic(getUsername(), getPassword())
@@ -95,6 +101,7 @@ public class Task2Tests extends BaseTest  {
 
     // GET /goods/{id}
     @Test
+    @Step("Проверяем получение продукта по id")
     void testGetProductById_Success() {
         // Сначала добавим товар
         String name = "GetById Product";
@@ -121,6 +128,7 @@ public class Task2Tests extends BaseTest  {
     }
 
     @Test
+    @Step("Получить продукт по несуществующему id")
     void testGetProductById_NotFound() {
         given()
                 .auth().basic(getUsername(), getPassword())
@@ -133,6 +141,7 @@ public class Task2Tests extends BaseTest  {
 
     // DELETE /goods/{id}
     @Test
+    @Step("Проверяем удаление продукта, успех")
     void testDeleteProduct_Success() {
         // Добавляем товар
         String name = "ToDelete Product";
@@ -165,6 +174,7 @@ public class Task2Tests extends BaseTest  {
     }
 
     @Test
+    @Step("Проверяем удаление продукта, несуществующий id")
     void testDeleteProduct_NotFound() {
         given()
                 .auth().basic(getUsername(), getPassword())
@@ -177,6 +187,7 @@ public class Task2Tests extends BaseTest  {
 
     // PATCH /goods/{id}
     @Test
+    @Step("Проверяем редактирование продукта")
     void testPatchProduct_Success() {
         // Добавляем товар
         String oldName = "Old Name";
@@ -215,6 +226,7 @@ public class Task2Tests extends BaseTest  {
     }
 
     @Test
+    @Step("Проверяем редактирование продукта, некорректное имя")
     void testPatchProduct_BadName() {
         // Добавляем товар
         String name = "Patch Test";
@@ -242,6 +254,7 @@ public class Task2Tests extends BaseTest  {
     }
 
     @Test
+    @Step("Проверяем добавление продукта, продукт не найден")
     void testPatchProduct_NotFound() {
         given()
                 .auth().basic(getUsername(), getPassword())
